@@ -112,9 +112,9 @@ app.get('/cardInfo/:cardNumber', authenticateToken, (req, res) => {
     };
 
     if (brandImageMapping[cardInfo.Brand]) {
-      imageLight = `https://api.flowcodeacademy.com/images/${brandImageMapping[cardInfo.Brand]}`;
+      imageLight = `https://api.flowcodeacademy.com.br/images/${brandImageMapping[cardInfo.Brand]}`;
     } else {
-      imageLight = 'empty';
+      imageLight = 'https://api.flowcodeacademy.com.br/images/empty.png';
     }
 
     // Lógica para mapear a resposta "imageDark" com base na marca (brand)
@@ -129,9 +129,9 @@ app.get('/cardInfo/:cardNumber', authenticateToken, (req, res) => {
     };
 
     if (brandImageDarkMapping[cardInfo.Brand]) {
-      imageDark = `https://api.flowcodeacademy.com/images/${brandImageDarkMapping[cardInfo.Brand]}`;
+      imageDark = `https://api.flowcodeacademy.com.br/images/${brandImageDarkMapping[cardInfo.Brand]}`;
     } else {
-      imageDark = 'empty';
+      imageDark = 'https://api.flowcodeacademy.com.br/images/emptydark.png';
     }
 
     res.json({
