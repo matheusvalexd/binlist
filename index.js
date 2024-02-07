@@ -5,7 +5,7 @@ const fs = require('fs/promises');
 const path = require('path');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 21469;
 
 const BINLIST_API_URL = 'https://raw.githubusercontent.com/iannuttall/binlist-data/master/binlist-data.csv';
 const SECRET_KEY = 'tokenauth'; // Substitua por uma chave secreta mais segura em um ambiente de produção
