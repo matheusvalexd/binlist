@@ -106,7 +106,7 @@ app.get('/cardInfo/:cardNumber', authenticateToken, (req, res) => {
       VISA: 'visa.png',
       MASTERCARD: 'master.png',
       DISCOVER: 'discover.png',
-      AMERICAN EXPRESS: 'amex.png',
+      'AMERICAN EXPRESS': 'amex.png',
       ELO: 'elo.png',
       // Adicione mais mapeamentos conforme necessário
     };
@@ -121,9 +121,9 @@ app.get('/cardInfo/:cardNumber', authenticateToken, (req, res) => {
     let imageDark;
     const brandImageDarkMapping = {
       VISA: 'visadark.png',
-      DISCOVER: 'discoverdark'
+      DISCOVER: 'discoverdark.png',
       MASTERCARD: 'masterdark.png',
-      AMERICAN EXPRESS: 'amexdark.png'
+      'AMERICAN EXPRESS': 'amexdark.png',
       ELO: 'elodark.png',
       // Adicione mais mapeamentos conforme necessário
     };
@@ -136,8 +136,8 @@ app.get('/cardInfo/:cardNumber', authenticateToken, (req, res) => {
 
     res.json({
       bin: cardInfo.BIN,
-      brand: cardInfo.Brand,
-      type: cardInfo.Type,
+      bandeira: cardInfo.Brand,
+      tipo: cardInfo.Type,
       imageLight,
       imageDark,
     });
