@@ -165,7 +165,8 @@ app.post('/criar-token', async (req, res) => {
     if (requestCounts[userRequestKey] >= MAX_REQUESTS_PER_DAY) {
       return res.status(429).json({ error: 'Too many requests for today' });
     }
-  
+    
+
     // Atualiza o número de solicitações para o token atual
     requestCounts[userRequestKey]++;
   
