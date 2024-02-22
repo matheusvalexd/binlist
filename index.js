@@ -3,6 +3,7 @@ const axios = require('axios');
 const jwt = require('jsonwebtoken');
 const fs = require('fs/promises');
 const path = require('path');
+const { v4: uuidv4 } = require('uuid');
 
 const app = express();
 const port = process.env.PORT || 21469;
@@ -173,30 +174,30 @@ app.use(express.json());
 
 // Endpoint para criar um token
 app.post('/criar-token', async (req, res) => {
-    const { email } = req.body;
-  
-    // Verifica se a chave fornecida no header é válida
-    const authHeader = req.header('Authorization');
-    const providedSecretKey = authHeader && authHeader.split(' ')[1];
-  
-    if (providedSecretKey !== SECRET_KEY) {
-      return res.status(403).json({ error: 'Unauthorized' });
-    }
-  
-    if (!email) {
-      return res.status(400).json({ error: 'Email is required' });
-    }
-  
-    // Gera um novo token usando a mesma chave secreta
-    const newToken = jwt.sign({ email }, SECRET_KEY);
-  
-    // Salva o novo token e seu email nos dados
-    tokensData[email] = newToken;
-  
-    // Salva os dados atualizados no arquivo
-    await saveTokensData();
-  
-    res.json({ token: newToken });
+  const { email } = req.body;
+
+  // Verifica se a chave fornecida no header é válida
+  const authHeader = req.header('Authorization');
+  const providedSecretKey = authHeader && authHeader.split(' ')[1];
+
+  if (providedSecretKey !== SECRET_KEY) {
+    return res.status(403).json({ error: 'Unauthorized' });
+  }
+
+  if (!email) {
+    return res.status(400).json({ error: 'Email is required' });
+  }
+
+  // Gera um novo token usando a mesma chave secreta
+  const newToken = jwt.sign({ email, uniqueId: uuidv4() }, SECRET_KEY);
+
+  // Salva o novo token e seu email nos dados
+  tokensData[email] = newToken;
+
+  // Salva os dados atualizados no arquivo
+  await saveTokensData();
+
+  res.json({ token: newToken });
 });
 
 // Endpoint para excluir um token
