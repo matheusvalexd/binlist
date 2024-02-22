@@ -142,7 +142,28 @@ app.get('/cardInfo/:cardNumber', authenticateToken, (req, res) => {
       imageDark,
     });
   } else {
-    res.status(404).json({ error: 'Card not found' });
+    // Se o bin não for encontrado, retorna as marcas padrão com base nos primeiros dígitos do BIN
+    let defaultBrand;
+
+    if (bin.startsWith('4')) {
+      defaultBrand = 'VISA';
+    } else if (bin.startsWith('5')) {
+      defaultBrand = 'MASTERCARD';
+    } else if (bin.startsWith('6')) {
+      defaultBrand = 'DISCOVER';
+    } else if (bin.startsWith('3')) {
+      defaultBrand = 'AMERICAN EXPRESS';
+    } else {
+      defaultBrand = 'VISA'; // Caso não corresponda a nenhum padrão, retorna VISA como padrão
+    }
+
+    res.json({
+      bin,
+      bandeira: defaultBrand,
+      tipo: 'Desconhecido',
+      imageLight: `https://api.flowcodeacademy.com.br/images/${defaultBrand.toLowerCase()}.png`,
+      imageDark: `https://api.flowcodeacademy.com.br/images/${defaultBrand.toLowerCase()}dark.png`,
+    });
   }
 });
 
