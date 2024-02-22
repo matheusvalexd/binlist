@@ -90,12 +90,33 @@ app.use('/imgs', express.static(IMAGES_PATH));
 // Carrega dados de tokens ao iniciar o servidor
 loadTokensData();
 
-app.get('/cardInfo/:cardNumber', authenticateToken, (req, res) => {
-  const cardNumber = req.params.cardNumber;
-  const bin = cardNumber.slice(0, 6);
+// Adiciona o número máximo de solicitações por dia por token
+const MAX_REQUESTS_PER_DAY = 5;
 
+const requestCounts = {}; // Armazena o número de solicitações por token por dia
+
+// Middleware para controle de solicitações
+const rateLimitMiddleware = (req, res, next) => {
   const userToken = req.header('Authorization').split(' ')[1];
   const userRequestKey = `${userToken}_${new Date().toISOString().split('T')[0]}`;
+
+  if (!requestCounts[userRequestKey]) {
+    requestCounts[userRequestKey] = 0;
+  }
+
+  if (requestCounts[userRequestKey] >= MAX_REQUESTS_PER_DAY) {
+    return res.status(429).json({ error: 'Too many requests for today' });
+  }
+
+  // Atualiza o número de solicitações para o token atual
+  requestCounts[userRequestKey]++;
+  next();
+};
+
+// Rota para obter informações do cartão
+app.get('/cardInfo/:cardNumber', authenticateToken, rateLimitMiddleware, (req, res) => {
+  const cardNumber = req.params.cardNumber;
+  const bin = cardNumber.slice(0, 6);
 
   // Lógica para encontrar o bin correspondente na lista
   const cardInfo = cardList.find((card) => card.BIN === bin);
@@ -168,10 +189,6 @@ app.get('/cardInfo/:cardNumber', authenticateToken, (req, res) => {
   }
 });
 
-//começa aqui o codigo novo
-
-app.use(express.json());
-
 // Endpoint para criar um token
 app.post('/criar-token', async (req, res) => {
   const { email } = req.body;
@@ -202,27 +219,27 @@ app.post('/criar-token', async (req, res) => {
 
 // Endpoint para excluir um token
 app.post('/delete-token', async (req, res) => {
-    const { email } = req.body;
-  
-    // Verifica se a chave fornecida no header é válida
-    const authHeader = req.header('Authorization');
-    const providedSecretKey = authHeader && authHeader.split(' ')[1];
-  
-    if (providedSecretKey !== SECRET_KEY) {
-      return res.status(403).json({ error: 'Unauthorized' });
-    }
-  
-    if (!email) {
-      return res.status(400).json({ error: 'Email is required' });
-    }
-  
-    // Deleta o token associado ao email
-    delete tokensData[email];
-  
-    // Salva os dados atualizados no arquivo
-    await saveTokensData();
-  
-    res.json({ message: 'Token deleted successfully' });
+  const { email } = req.body;
+
+  // Verifica se a chave fornecida no header é válida
+  const authHeader = req.header('Authorization');
+  const providedSecretKey = authHeader && authHeader.split(' ')[1];
+
+  if (providedSecretKey !== SECRET_KEY) {
+    return res.status(403).json({ error: 'Unauthorized' });
+  }
+
+  if (!email) {
+    return res.status(400).json({ error: 'Email is required' });
+  }
+
+  // Deleta o token associado ao email
+  delete tokensData[email];
+
+  // Salva os dados atualizados no arquivo
+  await saveTokensData();
+
+  res.json({ message: 'Token deleted successfully' });
 });
 
 app.listen(port, () => {
