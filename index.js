@@ -91,9 +91,9 @@ app.use('/imgs', express.static(IMAGES_PATH));
 loadTokensData();
 
 // Adiciona o número máximo de solicitações por dia por token
-const MAX_REQUESTS_PER_DAY = 5;
+const MAX_REQUESTS_PER_DAY = 500;
 
-const requestCounts = {}; // Armazena o número de solicitações por token por dia
+let requestCounts = {}; // Armazena o número de solicitações por token por dia
 
 // Middleware para controle de solicitações
 const rateLimitMiddleware = (req, res, next) => {
@@ -188,6 +188,11 @@ app.get('/cardInfo/:cardNumber', authenticateToken, rateLimitMiddleware, (req, r
     });
   }
 });
+
+// Middleware para resetar os contadores diariamente
+setInterval(() => {
+  requestCounts = {};
+}, 24 * 60 * 60 * 1000); // Reseta a cada 24 horas
 
 // Endpoint para criar um token
 app.post('/criar-token', async (req, res) => {
