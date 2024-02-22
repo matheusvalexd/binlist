@@ -112,9 +112,9 @@ app.get('/cardInfo/:cardNumber', authenticateToken, (req, res) => {
     };
 
     if (brandImageMapping[cardInfo.Brand]) {
-      imageLight = `https://api.flowcodeacademy.com.br/imgs/${brandImageMapping[cardInfo.Brand]}`;
+      imageLight = `https://apis.flowcodeacademy.com.br/imgs/${brandImageMapping[cardInfo.Brand]}`;
     } else {
-      imageLight = 'https://api.flowcodeacademy.com.br/imgs/empty.png';
+      imageLight = 'https://apis.flowcodeacademy.com.br/imgs/empty.png';
     }
 
     // Lógica para mapear a resposta "imageDark" com base na marca (brand)
