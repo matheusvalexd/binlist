@@ -10,7 +10,7 @@ const port = process.env.PORT || 21469;
 const BINLIST_API_URL = 'https://raw.githubusercontent.com/iannuttall/binlist-data/master/binlist-data.csv';
 const SECRET_KEY = 'tokenauth'; // Substitua por uma chave secreta mais segura em um ambiente de produção
 const TOKEN_FILE_PATH = path.join(__dirname, 'tokens.json');
-const IMAGES_PATH = path.join(__dirname, 'images');
+const IMAGES_PATH = path.join(__dirname, 'imgs');
 
 let cardList = [];
 let tokensData = {};
@@ -84,7 +84,7 @@ const authenticateToken = (req, res, next) => {
 };
 
 // Servir arquivos estáticos da pasta "images"
-app.use('/images', express.static(IMAGES_PATH));
+app.use('/imgs', express.static(IMAGES_PATH));
 
 // Carrega dados de tokens ao iniciar o servidor
 loadTokensData();
@@ -112,9 +112,9 @@ app.get('/cardInfo/:cardNumber', authenticateToken, (req, res) => {
     };
 
     if (brandImageMapping[cardInfo.Brand]) {
-      imageLight = `https://api.flowcodeacademy.com.br/images/${brandImageMapping[cardInfo.Brand]}`;
+      imageLight = `https://api.flowcodeacademy.com.br/imgs/${brandImageMapping[cardInfo.Brand]}`;
     } else {
-      imageLight = 'https://api.flowcodeacademy.com.br/images/empty.png';
+      imageLight = 'https://api.flowcodeacademy.com.br/imgs/empty.png';
     }
 
     // Lógica para mapear a resposta "imageDark" com base na marca (brand)
@@ -129,9 +129,9 @@ app.get('/cardInfo/:cardNumber', authenticateToken, (req, res) => {
     };
 
     if (brandImageDarkMapping[cardInfo.Brand]) {
-      imageDark = `https://api.flowcodeacademy.com.br/images/${brandImageDarkMapping[cardInfo.Brand]}`;
+      imageDark = `https://apis.flowcodeacademy.com.br/imgs/${brandImageDarkMapping[cardInfo.Brand]}`;
     } else {
-      imageDark = 'https://api.flowcodeacademy.com.br/images/emptydark.png';
+      imageDark = 'https://apis.flowcodeacademy.com.br/imgs/emptydark.png';
     }
 
     res.json({
@@ -161,8 +161,8 @@ app.get('/cardInfo/:cardNumber', authenticateToken, (req, res) => {
       bin,
       bandeira: defaultBrand,
       tipo: 'Desconhecido',
-      imageLight: `https://api.flowcodeacademy.com.br/images/${defaultBrand.toLowerCase()}.png`,
-      imageDark: `https://api.flowcodeacademy.com.br/images/${defaultBrand.toLowerCase()}dark.png`,
+      imageLight: `https://apis.flowcodeacademy.com.br/imgs/${defaultBrand.toLowerCase()}.png`,
+      imageDark: `https://apis.flowcodeacademy.com.br/imgs/${defaultBrand.toLowerCase()}dark.png`,
     });
   }
 });
